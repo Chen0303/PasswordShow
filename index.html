@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app" class="inputBox">
+        <input v-model="password" :type="isPasswordVisible ? 'text' : 'password'" required @input="checkPasswordStrength" maxlength="15">
+        <span>Password</span>
+        <div id="toggle" @click="showHide" :class="{ hide: isPasswordVisible }"></div>
+        <div id="passwordStrength">{{ passwordStrength }}</div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    password: '',
+                    isPasswordVisible: false,
+                    passwordStrength: ''
+                };
+            },
+            methods: {
+                showHide() {
+                    this.isPasswordVisible = !this.isPasswordVisible;
+                },
+                checkPasswordStrength() {
+                    let strength = 0;
+                    const password = this.password;
+
+                    if (password.length >= 8) {
+                        strength += 1;
+                    }
+
+                    let containsLowercase = /[a-z]+/.test(password);
+                    let containsUppercase = /[A-Z]+/.test(password);
+                    let containsNumber = /[0-9]+/.test(password);
+
+                    if (containsLowercase && containsUppercase && containsNumber) {
+                        strength += 1;
+                    }
+                    if (password.match(/[$&+,:;=?@#|'<>.^*()%!-]+/)) {
+                        strength += 1;
+                    }
+
+                    switch (strength) {
+                        case 0:
+                        case 1:
+                            this.passwordStrength = "弱";
+                            break;
+                        case 2:
+                             this.passwordStrength = "中";
+                            break;
+                        case 3:
+                            this.passwordStrength = "強";
+                            break;
+                        default:
+                            this.passwordStrength = "弱";
+                    }
+                }
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+</html>
